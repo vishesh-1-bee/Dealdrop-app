@@ -1,7 +1,7 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, Link2, ArrowRight } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { AuthModel } from "./ui/AuthModel";
 import { addProducts } from "@/app/actions";
@@ -82,7 +82,6 @@ const AddproductForm = ({ user }) => {
         }
 
         if (!user) {
-            // Save the normalized URL before OAuth redirect so it survives login
             try {
                 localStorage.setItem(PENDING_URL_KEY, cleanUrl);
             } catch (err) {
@@ -109,33 +108,64 @@ const AddproductForm = ({ user }) => {
 
     return (
         <>
-            <form className="w-full max-w-xl mx-auto flex flex-col sm:flex-row gap-3 justify-center items-center"
-                onSubmit={handleSubmit}>
-                <div className="w-full sm:flex-1">
-                    <Input
-                        type="text"
-                        value={url}
-                        onChange={(e) => seturl(e.target.value)}
-                        placeholder="Paste product URL (e.g. amazon.com/dp/...)"
-                        className="h-12 text-base w-full rounded-xl px-4 bg-white border border-gray-300 focus:border-orange-500 shadow-sm"
+            <form
+                className="w-full max-w-2xl mx-auto"
+                onSubmit={handleSubmit}
+            >
+                <div className="
+                    flex flex-col sm:flex-row gap-3
+                    p-2 rounded-2xl
+                    bg-white/80 dark:bg-stone-900/80
+                    border border-orange-200/70 dark:border-stone-700/70
+                    shadow-lg shadow-orange-100/40 dark:shadow-stone-900/40
+                    backdrop-blur-sm
+                ">
+                    {/* URL icon + input */}
+                    <div className="flex items-center flex-1 gap-3 pl-3">
+                        <Link2 className="w-4 h-4 text-orange-400 dark:text-orange-500 flex-shrink-0" />
+                        <Input
+                            type="text"
+                            id="product-url-input"
+                            value={url}
+                            onChange={(e) => seturl(e.target.value)}
+                            placeholder="Paste product URL from Amazon, Flipkart…"
+                            className="
+                                border-0 bg-transparent shadow-none focus-visible:ring-0
+                                text-stone-800 dark:text-stone-100
+                                placeholder:text-stone-400 dark:placeholder:text-stone-500
+                                text-base h-10 px-0 w-full
+                            "
+                            disabled={loading}
+                            autoComplete="off"
+                        />
+                    </div>
+
+                    {/* Submit button */}
+                    <Button
+                        className="btn-orange h-11 px-6 rounded-xl cursor-pointer font-semibold text-sm flex-shrink-0 gap-2 w-full sm:w-auto"
+                        type="submit"
                         disabled={loading}
-                    />
+                    >
+                        {loading ? (
+                            <>
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                                Tracking…
+                            </>
+                        ) : (
+                            <>
+                                Track Price
+                                <ArrowRight className="h-4 w-4" />
+                            </>
+                        )}
+                    </Button>
                 </div>
-                <Button 
-                    className="bg-orange-500 hover:bg-orange-600 h-12 px-6 rounded-xl cursor-pointer text-white font-semibold text-base shadow-md w-full sm:w-auto transition-all" 
-                    type="submit"
-                    disabled={loading}
-                >
-                    {loading ? (
-                        <div className="flex items-center gap-2">
-                            <Loader2 className="h-5 w-5 animate-spin" />
-                            <span>Adding Product...</span>
-                        </div>
-                    ) : (
-                        "Track price"
-                    )}
-                </Button>
+
+                {/* Helper text */}
+                <p className="text-xs text-stone-400 dark:text-stone-500 text-center mt-3">
+                    Supports Amazon, Flipkart, and 50+ other stores
+                </p>
             </form>
+
             <AuthModel isOpen={showAuthModel} onClose={() => setShowAuthModel(false)} />
         </>
     );
