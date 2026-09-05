@@ -50,13 +50,13 @@ try {
       try {
         //scrape the data from the scrape function
         const productData= await scrapedata(product.url);
-        if (productData) {
+        if (!productData) {
             result.failed++;
             continue;
         }
 
         const newPrice = parseFloat(productData.currentPrice)
-        const oldPrice = parseFloat(productData.current_price)
+         const oldPrice = parseFloat(product.current_price);
 
         await supabase.from("products").update({
             current_price: newPrice,
@@ -104,7 +104,7 @@ try {
         
       }
    }
-    return NextResponse,json({
+    return NextResponse.json({
         success:true,
         msg:"price checked successfully",
         result
